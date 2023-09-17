@@ -239,7 +239,6 @@ public class ASTParser extends ModifierVisitor<Void> {
                 inheritance.add(new ClassOrInterfaceType(inheritedLevel));
             }
 
-            //this.addMethods(newInterface, this.combination(level, level, this.combination, true), true);
             this.addMethods(newClass, this.combination(level, level, this.combination, false));
 
             newInterface.setExtendedTypes(inheritance);

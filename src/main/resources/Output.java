@@ -1,63 +1,15 @@
 import pyryy;
 
 interface top {
-
-    public right combine(top x) {
-    }
-
-    public left combine(left x) {
-    }
-
-    public bot combine(bot x) {
-    }
-
-    public right combine(right x) {
-    }
 }
 
 interface left extends top {
-
-    public left combine(top x) {
-    }
-
-    public left combine(left x) {
-    }
-
-    public bot combine(bot x) {
-    }
-
-    public bot combine(right x) {
-    }
 }
 
 interface bot extends left, right {
-
-    public bot combine(top x) {
-    }
-
-    public bot combine(left x) {
-    }
-
-    public bot combine(bot x) {
-    }
-
-    public bot combine(right x) {
-    }
 }
 
 interface right extends top {
-
-    public right combine(top x) {
-    }
-
-    public bot combine(left x) {
-    }
-
-    public bot combine(bot x) {
-    }
-
-    public right combine(right x) {
-    }
 }
 
 class topLevel implements top {

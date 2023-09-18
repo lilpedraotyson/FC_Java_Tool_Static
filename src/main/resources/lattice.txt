@@ -1,0 +1,6 @@
+meet
+top bot
+bot left
+bot right
+left top
+right top

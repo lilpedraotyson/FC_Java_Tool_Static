@@ -1,5 +1,7 @@
 package tecnico.ulisboa.pt;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,6 +11,29 @@ public class Lattice {
     private String top;
     private String bot;
     private Map<String, Integer> level_depht = new HashMap<>();
+    private String combination;
+
+    public Lattice(File input) throws FileNotFoundException {
+        Scanner myReader = new Scanner(input);
+        int count = 0;
+        while (myReader.hasNextLine()) {
+            String data = myReader.nextLine();
+            String levels[] = data.split(" ");
+            if (count == 0) {
+                this.combination = data;
+            } else if (count == 1) {
+                this.setTop(levels[0]);
+                this.setBot(levels[1]);
+            } else
+                this.addEdge(levels[0], levels[1]);
+            count++;
+        }
+        this.depht();
+    }
+
+    public String getCombination() {
+        return this.combination;
+    }
 
     public void setTop(String level) {
         this.top = level;

@@ -31,9 +31,9 @@ public class ASTParser extends ModifierVisitor<Void> {
     private Stack<String> declassification_stack = new Stack<>();
     private Integer count_declassification;
 
-    public ASTParser(Lattice l, String filename, String combination) {
+    public ASTParser(Lattice l, String filename) {
         this.lattice = l;
-        this.combination = combination;
+        this.combination = l.getCombination();
 
         SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(Main.class).resolve("src/main/resources"));
         this.cu = sourceRoot.parse("", filename);
@@ -57,11 +57,11 @@ public class ASTParser extends ModifierVisitor<Void> {
             String new_level = matcher.group(2).trim();
 
             this.count_declassification = this.count_declassification + 1;
-            this.declassification_variables.put(variable + this.count_declassification + "_level", variable);
-            this.declassification_stack.push(variable + this.count_declassification + "_level");
+            this.declassification_variables.put(variable + "_" + this.count_declassification + "_level", variable);
+            this.declassification_stack.push(variable + "_" + this.count_declassification + "_level");
             
             VariableDeclarationExpr declaration = new VariableDeclarationExpr(new ClassOrInterfaceType(new_level),
-                    variable + this.count_declassification + "_level");
+                    variable + "_" + this.count_declassification + "_level");
 
             String statement = "new " + new_level + "Level()";
             
@@ -76,11 +76,20 @@ public class ASTParser extends ModifierVisitor<Void> {
             for (Statement st : newBlock.getStatements()) {
                 if (st.equals(c.getCommentedNode().get())) {
                     block.addStatement(count, newStmt);
-                    block.getStatement(count+2).findAll(NameExpr.class).forEach(n -> {
-                        if (n.getNameAsString().contains(variable)) {
-                            n.setName(variable + this.count_declassification + "_level");
-                        }    
-                    });
+                    
+                    if (block.getStatement(count+1).isIfStmt()) {
+                        block.getStatement(count+1).findAll(NameExpr.class).forEach(n -> {
+                            if (n.getNameAsString().contains(variable) && n.getNameAsString().contains("_level")) {
+                                n.setName(variable + "_" + this.count_declassification + "_level");
+                            }    
+                        });
+                    } else {
+                        block.getStatement(count+2).findAll(NameExpr.class).forEach(n -> {
+                            if (n.getNameAsString().contains(variable)) {
+                                n.setName(variable + "_" + this.count_declassification + "_level");
+                            }    
+                        });
+                    }
                 }
                 count = count + 1;
             }
@@ -90,26 +99,24 @@ public class ASTParser extends ModifierVisitor<Void> {
             String variable = this.declassification_variables.get(declassification_variable);
             
             if (c.getCommentedNode().get().getClass().toString().equals(IfStmt.class.toString())) {
-                
                 c.getCommentedNode().get().findAll(NameExpr.class).forEach(n -> {
-                            int flag = 0;
-                            if (n.getNameAsString().equals(declassification_variable)) {
-                                for (int i = this.count_declassification; i > 0; i--) {
-                                    if (this.declassification_stack.search(variable + "_" + i) != -1) {
-                                        n.setName(variable + i + "_level");
-                                        flag = 1;
-                                        break;
-                                    }
-                                }
-                                if (flag == 0) {
-                                    n.setName(variable + "_level");
-                                }
-                                this.declassification_variables.remove(declassification_variable);
+                    int flag = 0;
+                    if (n.getNameAsString().equals(declassification_variable)) {
+                        for (int i = this.count_declassification; i > 0; i--) {
+                            if (this.declassification_stack.search(variable + "_" + i + "_level") != -1) {
+                                n.setName(variable + "_" + i + "_level");
+                                flag = 1;
+                                break;
                             }
-                        });
+                        }
+                        if (flag == 0) {
+                            n.setName(variable + "_level");
+                        }
+                        this.declassification_variables.remove(declassification_variable);
+                    }
+                });
 
             } else {
-                
                 BlockStmt block = c.getCommentedNode().get().findAncestor(BlockStmt.class).get();
                 int count = 0;
                 BlockStmt newBlock = new BlockStmt();
@@ -121,8 +128,8 @@ public class ASTParser extends ModifierVisitor<Void> {
                             int flag = 0;
                             if (n.getNameAsString().equals(declassification_variable)) {
                                 for (int i = this.count_declassification; i > 0; i--) {
-                                    if (this.declassification_stack.search(variable + "_" + i) != -1) {
-                                        n.setName(variable + i + "_level");
+                                    if (this.declassification_stack.search(variable + "_" + i + "_level") != -1) {
+                                        n.setName(variable + "_" + i + "_level");
                                         flag = 1;
                                         break;
                                     }
@@ -136,9 +143,9 @@ public class ASTParser extends ModifierVisitor<Void> {
                     }
                     count = count + 1;
                 }
-
             }
         }
+
         super.visit(c, arg);
         return c;
     }
@@ -301,8 +308,8 @@ public class ASTParser extends ModifierVisitor<Void> {
 
         int flag = 0;
         for (int i = this.count_declassification; i > 0; i--) {
-            if (this.declassification_stack.search(variables.get(index).toString() + i + "_level") != -1) {
-                variable = new NameExpr(variables.get(index).toString() + i + "_level");
+            if (this.declassification_stack.search(variables.get(index).toString() + "_" + i + "_level") != -1) {
+                variable = new NameExpr(variables.get(index).toString() + "_" + i + "_level");
                 flag = 1;
                 break;
             }
@@ -342,8 +349,8 @@ public class ASTParser extends ModifierVisitor<Void> {
 
             int flag = 0;
             for (int i = this.count_declassification; i > 0; i--) {
-                if (this.declassification_stack.search(variables.get(0).toString() + i + "_level") != -1) {
-                    valueExpr.setScope(new NameExpr(variables.get(0).toString() + i + "_level"));
+                if (this.declassification_stack.search(variables.get(0).toString() + "_" + i + "_level") != -1) {
+                    valueExpr.setScope(new NameExpr(variables.get(0).toString() + "_" + i + "_level"));
                     flag = 1;
                     break;
                 }
@@ -359,8 +366,8 @@ public class ASTParser extends ModifierVisitor<Void> {
             
             flag = 0;
             for (int i = this.count_declassification; i > 0; i--) {
-                if (this.declassification_stack.search(expr.getTarget().toString() + i + "_level") != -1) {
-                    newStmt = new ExpressionStmt(new AssignExpr(new NameExpr(expr.getTarget().toString() + i + "_level"), valueExpr, ASSIGN));
+                if (this.declassification_stack.search(expr.getTarget().toString() + "_" + i + "_level") != -1) {
+                    newStmt = new ExpressionStmt(new AssignExpr(new NameExpr(expr.getTarget().toString() + "_" + i + "_level"), valueExpr, ASSIGN));
                     flag = 1;
                     break;
                 }
@@ -372,8 +379,8 @@ public class ASTParser extends ModifierVisitor<Void> {
             int flag = 0;
             NameExpr target = new NameExpr();
             for (int i = this.count_declassification; i > 0; i--) {
-                if (this.declassification_stack.search(expr.getTarget().toString() + i + "_level") != -1) {
-                    target = new NameExpr(expr.getTarget().toString() + i + "_level");
+                if (this.declassification_stack.search(expr.getTarget().toString() + "_" + i + "_level") != -1) {
+                    target = new NameExpr(expr.getTarget().toString() + "_" + i + "_level");
                     flag = 1;
                     break;
                 }
@@ -386,8 +393,8 @@ public class ASTParser extends ModifierVisitor<Void> {
                 NameExpr value = new NameExpr();
                 flag = 0;
                 for (int i = this.count_declassification; i > 0; i--) {
-                    if (this.declassification_stack.search(expr.getValue().toString() + i + "_level") != -1) {
-                        value = new NameExpr(expr.getValue().toString() + i + "_level");
+                    if (this.declassification_stack.search(expr.getValue().toString() + "_" + i + "_level") != -1) {
+                        value = new NameExpr(expr.getValue().toString() + "_" + i + "_level");
                         flag = 1;
                         break;
                     }
@@ -424,8 +431,8 @@ public class ASTParser extends ModifierVisitor<Void> {
             
             int flag = 0;
             for (int i = this.count_declassification; i > 0; i--) {
-                if (this.declassification_stack.search(variables.get(0).toString() + i + "_level") != -1) {
-                    valueExpr.setScope(new NameExpr(variables.get(0).toString() + i + "_level"));
+                if (this.declassification_stack.search(variables.get(0).toString() + "_" + i + "_level") != -1) {
+                    valueExpr.setScope(new NameExpr(variables.get(0).toString() + "_" + i + "_level"));
                     flag = 1;
                     break;
                 }
@@ -445,7 +452,7 @@ public class ASTParser extends ModifierVisitor<Void> {
                 int flag = 0;
                 int aux = 0;
                 for (int i = this.count_declassification; i > 0; i--) {
-                    if (this.declassification_stack.search(stmt.getCondition().toString() + i + "_level") != -1) {
+                    if (this.declassification_stack.search(stmt.getCondition().toString() + "_" + i + "_level") != -1) {
                         aux = i;
                         flag = 1;
                         break;
@@ -453,7 +460,7 @@ public class ASTParser extends ModifierVisitor<Void> {
                 } if (flag == 0) {
                     level_condition_expression = new NameExpr(stmt.getCondition().toString() + "_level");
                 } else {
-                    level_condition_expression = new NameExpr(stmt.getCondition().toString() + aux + "_level");
+                    level_condition_expression = new NameExpr(stmt.getCondition().toString() + "_" + aux + "_level");
                 }
             } else {
                 level_condition_expression = new NameExpr("literal_level");
@@ -465,19 +472,19 @@ public class ASTParser extends ModifierVisitor<Void> {
         if (stmt.hasElseBlock()) {
             BlockStmt elseStmt = (BlockStmt) stmt.getElseStmt().get();
             elseStmt.findAll(AssignExpr.class).forEach(expr -> {
-                    int flag = 0;
-                    NameExpr target = new NameExpr();
-                    for (int i = this.count_declassification; i > 0; i--) {
-                        if (this.declassification_stack.search(expr.getTarget().toString() + i + "_level") != -1) {
-                            target = new NameExpr(expr.getTarget().toString() + i + "_level");
-                            flag = 1;
-                            break;
-                        }
-                    } if (flag == 0) {
-                        target = new NameExpr(expr.getTarget().toString() + "_level");
-                    } 
-                    elseStmt.addStatement(0, new ExpressionStmt(new AssignExpr(
-                    target, level_condition_expression, ASSIGN)));
+                int flag = 0;
+                NameExpr target = new NameExpr();
+                for (int i = this.count_declassification; i > 0; i--) {
+                    if (this.declassification_stack.search(expr.getTarget().toString() + "_" + i + "_level") != -1) {
+                        target = new NameExpr(expr.getTarget().toString() + "_" + i + "_level");
+                        flag = 1;
+                        break;
+                    }
+                } if (flag == 0) {
+                    target = new NameExpr(expr.getTarget().toString() + "_level");
+                } 
+                elseStmt.addStatement(0, new ExpressionStmt(new AssignExpr(
+                target, level_condition_expression, ASSIGN)));
             });
         }
 
@@ -485,8 +492,8 @@ public class ASTParser extends ModifierVisitor<Void> {
                     int flag = 0;
                     NameExpr target = new NameExpr();
                     for (int i = this.count_declassification; i > 0; i--) {
-                        if (this.declassification_stack.search(expr.getTarget().toString() + i + "_level") != -1) {
-                            target = new NameExpr(expr.getTarget().toString() + i + "_level");
+                        if (this.declassification_stack.search(expr.getTarget().toString() + "_" + i + "_level") != -1) {
+                            target = new NameExpr(expr.getTarget().toString() + "_" + i + "_level");
                             flag = 1;
                             break;
                         }

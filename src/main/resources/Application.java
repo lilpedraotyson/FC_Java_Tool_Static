@@ -46,33 +46,37 @@ public class Application_Linear {
 
         //bot
         Try y = new Try("Bot");
-
+        //declassification(y, left) {
         y = x;
 
         x = m + "sad" + d + m.test(a, c, d) + 1 + true;
-        //declassification(y, left) {
-        x = m.test1(y) + y;
-
+        //declassification(x, right) {
+        x = m.test1(y) + y;   
         x = y + m;
 
-        x = y + 1;
-
+        x = y + 1;   
         y = 1;
         y = "sdsda";
-        
         y = true;
-        
+        //declassification(y, top) {
         if(x < y && z == 1) {
             x = y;
             y = 1;
-            //}
             n = a + m.test(y);
         } else {
             if (x) {
                 a = z;
+                a = y;
+                y = b;
             } else {
                 d = m.test(y);
             }
         }
+        //}
+        y = b;
+        y = c;
+        //}
+        y = d;
+        //}
     }
 }

@@ -11,7 +11,7 @@ public class Main {
 
         Lattice lattice = new Lattice(input_lattice);
 
-        ASTParser ast = new ASTParser(lattice, "Application.java");
+        ASTParser ast = new ASTParser(lattice, "src/main/resources/Application.java");
 
         //System.out.print(ast);
         FileWriter myWriter = new FileWriter(output);

@@ -1,0 +1,4 @@
+join
+top bot
+bot mid
+mid top

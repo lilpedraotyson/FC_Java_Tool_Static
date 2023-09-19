@@ -33,7 +33,7 @@ class Try1 {
     }
 }
 
-public class Application_Linear {
+public class Application {
     public static void main(String[] args) {
         //top
         Try x = new Try("Top", 1, "afdasfa");
@@ -73,10 +73,10 @@ public class Application_Linear {
             }
         }
         //}
-        y = b;
-        y = c;
+        y = x + m;
+        x =  y + c;
         //}
-        y = d;
+        y = x + c;
         //}
     }
 }

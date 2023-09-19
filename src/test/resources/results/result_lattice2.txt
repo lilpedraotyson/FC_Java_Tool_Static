@@ -1,0 +1,11 @@
+Top level: top
+Bottom level: bot
+top: 
+left: top, 
+bot: left, right, 
+right: top, 
+Reverse: 
+top: left, right, 
+left: bot, 
+bot: 
+right: bot,

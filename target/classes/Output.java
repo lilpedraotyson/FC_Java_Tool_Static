@@ -1,15 +1,47 @@
 import pyryy;
 
 interface top {
+
+    public top combine(top x);
+
+    public top combine(left x);
+
+    public top combine(bot x);
+
+    public top combine(right x);
 }
 
 interface left extends top {
+
+    public top combine(top x);
+
+    public left combine(left x);
+
+    public left combine(bot x);
+
+    public top combine(right x);
 }
 
 interface bot extends left, right {
+
+    public top combine(top x);
+
+    public left combine(left x);
+
+    public bot combine(bot x);
+
+    public right combine(right x);
 }
 
 interface right extends top {
+
+    public top combine(top x);
+
+    public top combine(left x);
+
+    public right combine(bot x);
+
+    public right combine(right x);
 }
 
 class topLevel implements top {
@@ -17,20 +49,20 @@ class topLevel implements top {
     public topLevel() {
     }
 
-    public right combine(top x) {
-        return new rightLevel();
+    public top combine(top x) {
+        return this;
     }
 
-    public left combine(left x) {
-        return new leftLevel();
+    public top combine(left x) {
+        return this;
     }
 
-    public bot combine(bot x) {
-        return new botLevel();
+    public top combine(bot x) {
+        return this;
     }
 
-    public right combine(right x) {
-        return new rightLevel();
+    public top combine(right x) {
+        return this;
     }
 }
 
@@ -39,20 +71,20 @@ class leftLevel implements left {
     public leftLevel() {
     }
 
-    public left combine(top x) {
-        return this;
+    public top combine(top x) {
+        return new topLevel();
     }
 
     public left combine(left x) {
         return this;
     }
 
-    public bot combine(bot x) {
-        return new botLevel();
+    public left combine(bot x) {
+        return this;
     }
 
-    public bot combine(right x) {
-        return new botLevel();
+    public top combine(right x) {
+        return new topLevel();
     }
 }
 
@@ -61,20 +93,20 @@ class botLevel implements bot {
     public botLevel() {
     }
 
-    public bot combine(top x) {
-        return this;
+    public top combine(top x) {
+        return new topLevel();
     }
 
-    public bot combine(left x) {
-        return this;
+    public left combine(left x) {
+        return new leftLevel();
     }
 
     public bot combine(bot x) {
         return this;
     }
 
-    public bot combine(right x) {
-        return this;
+    public right combine(right x) {
+        return new rightLevel();
     }
 }
 
@@ -83,16 +115,16 @@ class rightLevel implements right {
     public rightLevel() {
     }
 
-    public right combine(top x) {
+    public top combine(top x) {
+        return new topLevel();
+    }
+
+    public top combine(left x) {
+        return new topLevel();
+    }
+
+    public right combine(bot x) {
         return this;
-    }
-
-    public bot combine(left x) {
-        return new botLevel();
-    }
-
-    public bot combine(bot x) {
-        return new botLevel();
     }
 
     public right combine(right x) {
@@ -142,7 +174,7 @@ class Try1 {
     }
 }
 
-public class Application_Linear {
+public class Application {
 
     public static void main(String[] args) {
         //}
@@ -213,12 +245,12 @@ public class Application_Linear {
             }
         }
         //}
-        y = b;
-        y_1_level = b_level;
-        y = c;
-        y_1_level = c_level;
+        y = x + m;
+        y_1_level = x_2_level.combine(m_level);
+        x = y + c;
+        x_2_level = y_1_level.combine(c_level);
         //}
-        y = d;
-        y_1_level = d_level;
+        y = x + c;
+        y_1_level = x_level.combine(c_level);
     }
 }

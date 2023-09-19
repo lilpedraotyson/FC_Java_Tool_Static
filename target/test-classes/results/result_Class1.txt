@@ -1,0 +1,78 @@
+interface top {
+}
+
+interface bot extends mid {
+}
+
+interface mid extends top {
+}
+
+class topLevel implements top {
+
+    public topLevel() {
+    }
+
+    public top combine(top x) {
+        return this;
+    }
+
+    public top combine(bot x) {
+        return this;
+    }
+
+    public top combine(mid x) {
+        return this;
+    }
+}
+
+class botLevel implements bot {
+
+    public botLevel() {
+    }
+
+    public top combine(top x) {
+        return new topLevel();
+    }
+
+    public bot combine(bot x) {
+        return this;
+    }
+
+    public mid combine(mid x) {
+        return new midLevel();
+    }
+}
+
+class midLevel implements mid {
+
+    public midLevel() {
+    }
+
+    public top combine(top x) {
+        return new topLevel();
+    }
+
+    public mid combine(bot x) {
+        return this;
+    }
+
+    public mid combine(mid x) {
+        return this;
+    }
+}
+
+class Test {
+
+    public String t;
+
+    public Test(String t) {
+        this.t = t;
+    }
+}
+
+public class Application {
+
+    public static void main(String[] args) {
+        bot literal_level = new botLevel();
+    }
+}

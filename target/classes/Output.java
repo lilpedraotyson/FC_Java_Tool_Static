@@ -1,5 +1,3 @@
-import pyryy;
-
 interface top {
 
     public top combine(top x);
@@ -132,125 +130,58 @@ class rightLevel implements right {
     }
 }
 
-class Try {
+class Test {
 
     public String t;
 
-    public Try(String t) {
+    public Test(String t) {
         this.t = t;
     }
 
-    public void test1(Try x) {
-        System.out.println("entrei1");
-        System.out.println(x.toString());
-    }
-}
-
-class Try1 {
-
-    public String t1;
-
-    public int t2;
-
-    public static final boolean t3;
-
-    public String t4;
-
-    public Try1(String t) {
-        this.t = t;
-    }
-
-    public Try1(String t, String t1) {
-        this.t = t;
-        this.t1 = t1;
-        if (t == t1) {
-            this.t2 = t1;
-        }
-    }
-
-    public void test1(Try x) {
-        System.out.println("entrei1");
-        System.out.println(x.toString());
+    public Test method1(Test x) {
+        return x;
     }
 }
 
 public class Application {
 
     public static void main(String[] args) {
-        //}
         bot literal_level = new botLevel();
         //top
-        Try x = new Try("Top", 1, "afdasfa");
+        Test x = new Test("Top");
         top x_level = new topLevel();
         //right
-        Try r = new Try("Right");
+        Test r = new Test("right");
         right r_level = new rightLevel();
         //left
-        Try l = new Try("Left");
+        Test l = new Test("left");
         left l_level = new leftLevel();
         //bot
-        Try y = new Try("Bot");
-        bot y_level = new botLevel();
-        left y_1_level = new leftLevel();
-        //declassification(y, left) {
-        y = x;
-        y_1_level = x_level;
-        x = m + "sad" + d + m.test(a, c, d) + 1 + true;
-        x_level = m_level.combine(d_level.combine(m_level.combine(a_level.combine(c_level.combine(d_level.combine(literal_level))))));
-        right x_2_level = new rightLevel();
-        //declassification(x, right) {
-        x = m.test1(y) + y;
-        x_2_level = m_level.combine(y_1_level.combine(y_1_level));
-        x = y + m;
-        x_2_level = y_1_level.combine(m_level);
-        x = y + 1;
-        x_2_level = y_1_level.combine(literal_level);
-        y = 1;
-        y_1_level = literal_level;
-        y = "sdsda";
-        y_1_level = literal_level;
-        y = true;
-        y_1_level = literal_level;
-        top y_3_level = new topLevel();
-        //declassification(y, top) {
-        if (x < y && z == 1) {
-            n_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            y_3_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            x_2_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            x = y;
-            x_2_level = y_3_level;
-            y = 1;
-            y_3_level = literal_level;
-            n = a + m.test(y);
-            n_level = a_level.combine(m_level.combine(y_3_level));
-        } else {
-            d_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            y_3_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            a_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            a_level = x_2_level.combine(y_3_level.combine(z_level.combine(literal_level)));
-            if (x) {
-                y_3_level = x_2_level;
-                a_level = x_2_level;
-                a_level = x_2_level;
-                a = z;
-                a_level = z_level;
-                a = y;
-                a_level = y_3_level;
-                y = b;
-                y_3_level = b_level;
-            } else {
-                d_level = x_2_level;
-                d = m.test(y);
-                d_level = m_level.combine(y_3_level);
-            }
+        Test b = new Test("bot");
+        bot b_level = new botLevel();
+        x = l;
+        x_level = l_level;
+        y = x.method1(x);
+        y_level = x_level.combine(x_level);
+        l = r.method1(x) + b + l;
+        l_level = r_level.combine(x_level.combine(b_level.combine(l_level)));
+        High y_1_level = new HighLevel();
+        //declassification(y, High) {
+        b = x;
+        b_level = x_level;
+        r = l.method1(b) * 10;
+        r_level = y_1_level.combine(b_level.combine(literal_level));
+        //}
+        if (x.method1(b) + "implicit") {
+            r_level = x_level.combine(b_level.combine(literal_level));
+            b_level = x_level.combine(b_level.combine(literal_level));
+            r_level = x_level.combine(b_level.combine(literal_level));
+            r = b;
+            r_level = b_level;
+            b = b.method1(l);
+            b_level = b_level.combine(l_level);
+            r = x.method1(b) + 10 + "combine";
+            r_level = x_level.combine(b_level.combine(literal_level));
         }
-        //}
-        y = x + m;
-        y_1_level = x_2_level.combine(m_level);
-        x = y + c;
-        x_2_level = y_1_level.combine(c_level);
-        //}
-        y = x + c;
-        y_1_level = x_level.combine(c_level);
     }
 }

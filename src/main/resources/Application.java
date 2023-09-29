@@ -1,82 +1,40 @@
-import pyryy;
-
-class Try {
+class Test {
     public String t;
 
-    public Try(String t) {this.t = t;}
+    public Test(String t) {this.t = t;}
 
-    public void test1(Try x) {
-        System.out.println("entrei1");
-        System.out.println(x.toString());
-    }
-}
-
-class Try1 {
-    public String t1;
-    public int t2;
-    public static final boolean t3;
-    public String t4;
-
-    public Try1(String t) {this.t = t;}
-
-    public Try1(String t, String t1) {
-        this.t = t;
-        this.t1 = t1;
-        if (t == t1) {
-            this.t2 = t1;
-        }
-    }
-
-    public void test1(Try x) {
-        System.out.println("entrei1");
-        System.out.println(x.toString());
+    public Test method1(Test x) {
+        return x;
     }
 }
 
 public class Application {
     public static void main(String[] args) {
         //top
-        Try x = new Try("Top", 1, "afdasfa");
+        Test x = new Test("Top");
 
         //right
-        Try r = new Try("Right");
+        Test r = new Test("right");
 
         //left
-        Try l = new Try("Left");
+        Test l = new Test("left");
 
         //bot
-        Try y = new Try("Bot");
-        //declassification(y, left) {
-        y = x;
+        Test b = new Test("bot");
 
-        x = m + "sad" + d + m.test(a, c, d) + 1 + true;
-        //declassification(x, right) {
-        x = m.test1(y) + y;   
-        x = y + m;
+        x = l;
+        y = x.method1(x);
+        l = r.method1(x) + b + l;
 
-        x = y + 1;   
-        y = 1;
-        y = "sdsda";
-        y = true;
-        //declassification(y, top) {
-        if(x < y && z == 1) {
-            x = y;
-            y = 1;
-            n = a + m.test(y);
-        } else {
-            if (x) {
-                a = z;
-                a = y;
-                y = b;
-            } else {
-                d = m.test(y);
-            }
+        //declassification(y, High) {
+        b = x;
+        r = l.method1(b) * 10;
+        //}
+
+        if (x.method1(b) + "implicit") {
+            r = b;
+            b = b.method1(l);
+            r = x.method1(b) + 10 + "combine";
         }
-        //}
-        y = x + m;
-        x =  y + c;
-        //}
-        y = x + c;
-        //}
     }
 }

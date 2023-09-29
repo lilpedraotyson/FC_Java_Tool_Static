@@ -20,6 +20,7 @@ import com.github.javaparser.utils.SourceRoot;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.github.javaparser.ast.expr.AssignExpr.Operator.ASSIGN;
 
@@ -27,6 +28,7 @@ public class ASTParser extends ModifierVisitor<Void> {
     private Lattice lattice;
     public CompilationUnit cu;
     private String combination;
+    private String main_class;
     private HashMap<String, String> declassification_variables = new HashMap<>();
     private Stack<String> declassification_stack = new Stack<>();
     private Integer count_declassification;
@@ -37,7 +39,17 @@ public class ASTParser extends ModifierVisitor<Void> {
 
         SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(Main.class).resolve(filename.substring(0, filename.lastIndexOf("/") + 1)));
         this.cu = sourceRoot.parse("", filename.substring(filename.lastIndexOf("/") + 1));
-        
+
+        List<MethodDeclaration> methods;
+        for (ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class).stream().collect(Collectors.toList())) {
+            methods = c.getMethods();
+            for (MethodDeclaration m : methods) {
+                if (m.getNameAsString().equals("main")) {
+                    main_class = c.getNameAsString();
+                }
+            }
+        }    
+
         this.count_declassification = 0;
         this.LevelsToClassStructure();
         this.addLiteralVariableDeclarator();
@@ -146,7 +158,7 @@ public class ASTParser extends ModifierVisitor<Void> {
 
     @Override
     public Visitable visit(AssignExpr a, Void arg) {
-        if (a.findAncestor(ClassOrInterfaceDeclaration.class).get().getNameAsString().equals("Application")) {
+        if (a.findAncestor(ClassOrInterfaceDeclaration.class).get().getNameAsString().equals(main_class)) {
             this.assignmentExprRewrite(a);
         }
         super.visit(a, arg);
@@ -155,7 +167,7 @@ public class ASTParser extends ModifierVisitor<Void> {
 
     @Override
     public Visitable visit(IfStmt a, Void arg) {
-        if (a.findAncestor(ClassOrInterfaceDeclaration.class).get().getNameAsString().equals("Application")) {
+        if (a.findAncestor(ClassOrInterfaceDeclaration.class).get().getNameAsString().equals(main_class)) {
             this.ifStmtRewrite(a, arg);
         }
         super.visit(a, arg);
@@ -272,7 +284,7 @@ public class ASTParser extends ModifierVisitor<Void> {
     }
 
     private void addLiteralVariableDeclarator() {
-        MethodDeclaration main = cu.getClassByName("Application").get().getMethodsByName("main").get(0);
+        MethodDeclaration main = cu.getClassByName(main_class).get().getMethodsByName("main").get(0);
         BlockStmt block = main.getBody().get();
 
         VariableDeclarationExpr declaration = new VariableDeclarationExpr(new ClassOrInterfaceType(this.lattice.getBot()), "literal_level");
